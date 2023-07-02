@@ -8,10 +8,7 @@ const config = {
       extends: [
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
       ],
-      files: ['*.ts', '*.tsx'],
-      parserOptions: {
-        project: './tsconfig.json',
-      },
+      files: ['./**/*.{ts,tsx}'],
     },
     {
       extends: ['plugin:@typescript-eslint/disable-type-checked'],
