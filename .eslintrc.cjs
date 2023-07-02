@@ -13,6 +13,10 @@ const config = {
         project: './tsconfig.json',
       },
     },
+    {
+      extends: ['plugin:@typescript-eslint/disable-type-checked'],
+      files: ['./**/*.js'],
+    },
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
