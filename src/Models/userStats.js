@@ -18,25 +18,15 @@ const userStatsSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    str: {
-      type: Number,
-      default: 10,
-    },
-    hel: {
-      type: Number,
-      default: 10,
-    },
-    def: {
-      type: Number,
-      default: 10,
-    },
-    agi: {
-      type: Number,
-      default: 10,
-    },
-    mag: {
-      type: Number,
-      default: 10,
+    stats: {
+      type: Object,
+      default: {
+        str: 10,
+        hel: 10,
+        def: 10,
+        agi: 10,
+        mag: 10,
+      },
     },
   },
   {

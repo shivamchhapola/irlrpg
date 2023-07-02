@@ -16,21 +16,21 @@ import Head from 'next/head';
 import { MdAdd, MdCheck, MdClose, MdOutlineSettings } from 'react-icons/md';
 import { LuCigarette } from 'react-icons/lu';
 import { redirect } from 'next/navigation';
-import { text } from 'stream/consumers';
 
 Modal.setAppElement('#root');
 
 export default function App() {
-  let userToken: String | null;
   const [level, setLevel] = useState(0);
   const [xpNeeded, setXpNeeded] = useState(100);
   const [xp, setXp] = useState(0);
   const [points, setPoints] = useState(0);
-  const [str, setStr] = useState(0);
-  const [hel, setHel] = useState(0);
-  const [agi, setAgi] = useState(0);
-  const [def, setDef] = useState(0);
-  const [mag, setMag] = useState(0);
+  const [stats, setStats] = useState({
+    str: 0,
+    hel: 0,
+    agi: 0,
+    def: 0,
+    mag: 0,
+  });
   const [name, setName] = useState('Loading...');
   const [tasks, setTasks] = useState<
     Array<{
@@ -46,7 +46,7 @@ export default function App() {
     let res = await fetch('/api/user', {
       method: 'GET',
       headers: {
-        Authentication: 'Bearer ' + userToken,
+        Authentication: 'Bearer ' + localStorage.getItem('userToken'),
       },
     });
 
@@ -56,16 +56,50 @@ export default function App() {
       setXp(data.stats.xp);
       setXpNeeded(data.stats.lvl * 100);
       setPoints(data.stats.points);
-      setHel(data.stats.hel);
-      setStr(data.stats.str);
-      setDef(data.stats.def);
-      setAgi(data.stats.agi);
-      setMag(data.stats.mag);
+      setStats(data.stats.stats);
       setTasks(data.tasks);
       return setName(data.name);
     } else {
       console.log(await res.text());
     }
+  };
+
+  const completeTask = async (val: any, i: number, type: number) => {
+    let tempTasks = tasks;
+    tempTasks.splice(i, 1);
+    const res = await fetch('/api/completetask', {
+      method: 'POST',
+      body: JSON.stringify({ val, tasks: tempTasks, type }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authentication: 'Bearer ' + localStorage.getItem('userToken') ?? '',
+      },
+    });
+
+    if (res.ok) {
+      const resJ = await res.json();
+      await getUser();
+      return setTasks(resJ);
+    }
+
+    console.log(await res.text());
+  };
+
+  const usePoints = async (stat: string) => {
+    const res = await fetch('/api/usepoints', {
+      method: 'post',
+      body: JSON.stringify({ stat }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authentication: 'Bearer ' + localStorage.getItem('userToken') ?? '',
+      },
+    });
+
+    if (res.ok) {
+      return await getUser();
+    }
+
+    console.log(await res.text());
   };
 
   const customModalStyles = {
@@ -86,8 +120,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    userToken = localStorage.getItem('userToken');
-    if (!userToken) return redirect('/');
+    if (!localStorage.getItem('userToken')) return redirect('/');
     getUser();
   }, []);
 
@@ -144,51 +177,71 @@ export default function App() {
             <div className="w-full flex items-center text-white gap-2 relative mt-4">
               <PiHeartFill size="0.9rem" />
               <div>
-                Health <span className="font-bold">{hel}</span>
+                Health <span className="font-bold">{stats.hel}</span>
               </div>
-              <button className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
-                <PiPlusBold size="0.75rem" />
-              </button>
+              {points > 0 && (
+                <button
+                  onClick={() => usePoints('hel')}
+                  className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
+                  <PiPlusBold size="0.75rem" />
+                </button>
+              )}
             </div>
 
             <div className="w-full flex items-center text-white gap-2 relative">
               <PiSwordFill size="0.9rem" />
               <div>
-                Strength <span className="font-bold">{str}</span>
+                Strength <span className="font-bold">{stats.str}</span>
               </div>
-              <button className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
-                <PiPlusBold size="0.75rem" />
-              </button>
+              {points > 0 && (
+                <button
+                  onClick={() => usePoints('str')}
+                  className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
+                  <PiPlusBold size="0.75rem" />
+                </button>
+              )}
             </div>
 
             <div className="w-full flex items-center text-white gap-2 relative">
               <PiShield size="0.9rem" />
               <div>
-                Defence <span className="font-bold">{def}</span>
+                Defence <span className="font-bold">{stats.def}</span>
               </div>
-              <button className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
-                <PiPlusBold size="0.75rem" />
-              </button>
+              {points > 0 && (
+                <button
+                  onClick={() => usePoints('def')}
+                  className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
+                  <PiPlusBold size="0.75rem" />
+                </button>
+              )}
             </div>
 
             <div className="w-full flex items-center text-white gap-2 relative">
               <PiPersonSimpleRun size="0.9rem" />
               <div>
-                Agility <span className="font-bold">{agi}</span>
+                Agility <span className="font-bold">{stats.agi}</span>
               </div>
-              <button className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
-                <PiPlusBold size="0.75rem" />
-              </button>
+              {points > 0 && (
+                <button
+                  onClick={() => usePoints('agi')}
+                  className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
+                  <PiPlusBold size="0.75rem" />
+                </button>
+              )}
             </div>
 
             <div className="w-full flex items-center text-white gap-2 relative">
               <PiMagicWand size="0.9rem" />
               <div>
-                Magic <span className="font-bold">{mag}</span>
+                Magic <span className="font-bold">{stats.mag}</span>
               </div>
-              <button className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
-                <PiPlusBold size="0.75rem" />
-              </button>
+              {points > 0 && (
+                <button
+                  onClick={() => usePoints('mag')}
+                  className="absolute right-2 hover:bg-white hover:text-black hover:rotate-180 transition-all rounded-full p-[0.1rem]">
+                  <PiPlusBold size="0.75rem" />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -202,31 +255,21 @@ export default function App() {
               <button
                 onClick={() => setAdd(true)}
                 className="flex gap-2 items-center">
-                <MdAdd /> <div>Add Task/Habit</div>
+                <MdAdd /> <div>Add Task</div>
               </button>
             </div>
 
             {tasks.map((task, i) => {
-              if (task.type === 0)
-                return (
-                  <Task
-                    i={i}
-                    text={task.text}
-                    xp={task.val}
-                    tasks={tasks}
-                    setTasks={setTasks}
-                  />
-                );
-              else if (task.type === 1)
-                return (
-                  <Habit
-                    i={i}
-                    text={task.text}
-                    dmg={task.val}
-                    tasks={tasks}
-                    setTasks={setTasks}
-                  />
-                );
+              return (
+                <Task
+                  i={i}
+                  text={task.text}
+                  xp={task.val}
+                  tasks={tasks}
+                  setTasks={setTasks}
+                  completeTask={completeTask}
+                />
+              );
             })}
           </div>
         </div>
@@ -241,27 +284,7 @@ export default function App() {
   );
 }
 
-function Task({ i, text, xp, tasks, setTasks }: any) {
-  const completeTask = async () => {
-    let tempTasks = tasks;
-    tempTasks.splice(i, 1);
-    const res = await fetch('/api/completetask', {
-      method: 'POST',
-      body: JSON.stringify({ val: xp, tasks: tempTasks }),
-      headers: {
-        'Content-Type': 'application/json',
-        Authentication: 'Bearer ' + localStorage.getItem('userToken') ?? '',
-      },
-    });
-
-    if (res.ok) {
-      const resJ = await res.json();
-      return setTasks(resJ);
-    }
-
-    console.log(await res.text());
-  };
-
+function Task({ i, text, xp, completeTask }: any) {
   return (
     <div
       key={i}
@@ -275,7 +298,9 @@ function Task({ i, text, xp, tasks, setTasks }: any) {
       </div>
       <div className="flex gap-2 items-center">
         <button
-          onClick={completeTask}
+          onClick={() => {
+            completeTask(xp, i, 0);
+          }}
           className="hover:scale-105 transition-all bg-green-400 rounded-full p-1">
           <MdCheck size="1.25rem" />
         </button>
@@ -287,7 +312,7 @@ function Task({ i, text, xp, tasks, setTasks }: any) {
   );
 }
 
-function Habit({ i, text, dmg }: any) {
+function Habit({ i, text, dmg, completeTask }: any) {
   return (
     <div
       key={i}
@@ -300,7 +325,11 @@ function Habit({ i, text, dmg }: any) {
         </div>
       </div>
       <div className="flex gap-2 items-center">
-        <button className="hover:scale-105 transition-all bg-green-400 rounded-full p-1">
+        <button
+          onClick={() => {
+            completeTask(dmg, i, 1);
+          }}
+          className="hover:scale-105 transition-all bg-green-400 rounded-full p-1">
           <MdCheck size="1.25rem" />
         </button>
         <button className="hover:scale-105 transition-all bg-red-400 rounded-full p-1">
@@ -342,15 +371,13 @@ function AddTask({ setTasks, setAdd }: any) {
 
   return (
     <div className="flex flex-col gap-3 items-center">
-      <div
-        onClick={() => setHabit(!habit)}
-        className={`w-[5.5rem] flex justify-between items-center px-2 py-1 rounded-md transition-all cursor-pointer ${
-          habit ? 'bg-red-400 opacity-80' : 'bg-blue-400 opacity-80 text-white'
-        }`}>
-        <input className="w-4 h-4" type="checkbox" checked={habit} />
-        <span className="font-bold text-lg">Habit</span>
+      <div className="flex flex-col w-full">
+        <span className="text-[1.5rem] font-bold w-full text-center mb-1">
+          Add Task
+        </span>
+        <hr className="bg-black" />
       </div>
-      <div className="flex w-full gap-4">
+      <div className="flex w-full gap-4 mt-4">
         <div className="flex justify-between gap-4 flex-col">
           <span className="font-bold">{habit ? 'Habit' : 'Task'}</span>
           <span className="font-bold">{habit ? 'Damage' : 'XP'}</span>
@@ -367,6 +394,10 @@ function AddTask({ setTasks, setAdd }: any) {
             type="number"
             min={1}
             max={10}
+            onChange={(e) => {
+              if (parseInt(e.target.value) < 1) e.target.value = '1';
+              else if (parseInt(e.target.value) > 10) e.target.value = '10';
+            }}
             className="outline outline-2 px-1 rounded-sm w-12"
           />
         </div>
