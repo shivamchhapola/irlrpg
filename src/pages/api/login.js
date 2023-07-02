@@ -1,7 +1,7 @@
-import dbconnect from '../../../lib/db.js';
-import User from '../../../models/user.js';
+import dbconnect from '../../lib/db.js';
+import User from '../../models/user.js';
 import Joi from 'joi';
-import { generateToken } from '../../../lib/jwt.js';
+import { generateToken } from '../../lib/jwt.js';
 
 export default async function handler(req, res) {
   const { username, password } = req.body;

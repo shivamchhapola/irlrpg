@@ -6,21 +6,17 @@ export const generateToken = (id) => {
   });
 };
 
-export const verify = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
+export const verify = (authHeader) => {
   if (authHeader) {
     const token = authHeader.split(' ')[1];
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    return jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
-        return res.sendStatus(403);
+        return false;
       }
-
-      req.user = user;
-      next();
+      return user.id;
     });
   } else {
-    res.sendStatus(401);
+    return false;
   }
 };

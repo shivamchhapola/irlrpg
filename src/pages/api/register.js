@@ -1,8 +1,10 @@
-import dbconnect from '../../../lib/db.js';
-import User from '../../../models/user.js';
+import dbconnect from '../../lib/db.js';
+import User from '../../models/user.js';
+import UserStats from '../../models/userStats.js';
+import UserTasks from '../../models/userTasks.js';
 import Joi from 'joi';
 import { joiPasswordExtendCore } from 'joi-password';
-import { generateToken } from '../../../lib/jwt.js';
+import { generateToken } from '../../lib/jwt.js';
 
 const joiPassword = Joi.extend(joiPasswordExtendCore);
 
@@ -54,6 +56,13 @@ export default async function handler(req, res) {
   const user = await User.create(data).catch((err) => {
     return res.status(500).send('Could not create an account: ' + err);
   });
+
+  try {
+    await UserStats.create({ userid: user._id });
+    await UserTasks.create({ userid: user._id });
+  } catch (error) {
+    return res.status(500).send('Could not create an account: ' + err);
+  }
 
   if (user) {
     return res.status(200).send(generateToken(user._id));

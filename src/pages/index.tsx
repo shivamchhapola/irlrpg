@@ -46,7 +46,7 @@ export default function Home() {
     <>
       <Head>
         <title>irlRPG</title>
-        <meta name="description" content="Enter the matrix" />
+        <meta name="description" content="Turn real life into a RPG" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -134,7 +134,7 @@ function Login({
       password: loginPass.current.value,
     };
 
-    const res = await fetch('/api/users/register', {
+    const res = await fetch('/api/register', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -218,7 +218,7 @@ function Signup({
       password: signupPass.current.value,
     };
 
-    const res = await fetch('/api/users/register', {
+    const res = await fetch('/api/register', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
