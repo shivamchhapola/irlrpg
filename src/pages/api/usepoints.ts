@@ -1,7 +1,7 @@
 // @ts-nocheck
-import dbConnect from '../../lib/db.js';
-import { verify } from '../../lib/jwt.js';
-import UserStats from '../../models/userStats.js';
+import dbConnect from '../../lib/db.ts';
+import { verify } from '../../lib/jwt.ts';
+import UserStats from '../../models/userStats.ts';
 
 export default async function handler(req, res) {
   const authHeader = req.headers.authentication;

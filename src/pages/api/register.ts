@@ -1,11 +1,11 @@
 // @ts-nocheck
-import dbconnect from '../../lib/db.js';
-import User from '../../models/user.js';
-import UserStats from '../../models/userStats.js';
-import UserTasks from '../../models/userTasks.js';
+import dbconnect from '../../lib/db.ts';
+import User from '../../models/user.ts';
+import UserStats from '../../models/userStats.ts';
+import UserTasks from '../../models/userTasks.ts';
 import Joi from 'joi';
 import { joiPasswordExtendCore } from 'joi-password';
-import { generateToken } from '../../lib/jwt.js';
+import { generateToken } from '../../lib/jwt.ts';
 
 const joiPassword = Joi.extend(joiPasswordExtendCore);
 
