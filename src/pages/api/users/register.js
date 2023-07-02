@@ -1,5 +1,5 @@
 import dbconnect from '../../../lib/db.js';
-import User from '../../../Models/user.js';
+import User from '../../../models/user.js';
 import Joi from 'joi';
 import { joiPasswordExtendCore } from 'joi-password';
 import { generateToken } from '../../../lib/jwt.js';

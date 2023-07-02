@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ramonak/react-progress-bar": "^5.0.3",
     "@t3-oss/env-nextjs": "^0.3.1",
     "bcrypt": "^5.1.0",
     "joi": "^17.9.2",
@@ -22,6 +23,7 @@
     "react-hook-form": "^7.45.1",
     "react-icons": "^4.10.1",
     "react-modal": "^3.16.1",
+    "react-nice-avatar": "^1.4.1",
     "rxjs": "^7.8.1",
     "zod": "^3.21.4"
   },

@@ -25,10 +25,6 @@ const userSchema = mongoose.Schema(
       required: [true, 'Password is required!'],
       maxLength: 150,
     },
-    class: {
-      type: Number,
-    },
-    tasks: [{ type: Object }],
   },
   {
     timestamps: true,
