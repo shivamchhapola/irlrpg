@@ -1,3 +1,4 @@
+// @ts-nocheck
 import dbconnect from '../../lib/db.js';
 import User from '../../models/user.js';
 import UserStats from '../../models/userStats.js';

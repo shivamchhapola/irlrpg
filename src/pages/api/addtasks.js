@@ -1,3 +1,4 @@
+// @ts-nocheck
 import dbConnect from '../../lib/db.js';
 import { verify } from '../../lib/jwt.js';
 import UserTasks from '../../models/userTasks.js';
