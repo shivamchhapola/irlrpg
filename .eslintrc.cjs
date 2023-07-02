@@ -10,10 +10,6 @@ const config = {
       ],
       files: ['./**/*.{ts,tsx}'],
     },
-    {
-      extends: ['plugin:@typescript-eslint/disable-type-checked'],
-      files: ['./**/*.js'],
-    },
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
