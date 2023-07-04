@@ -9,6 +9,9 @@ const config = {
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
       ],
       files: ['./**/*.{ts,tsx}'],
+      rules: {
+        '@typescript-eslint/ban-ts-comment': ['warn'],
+      },
     },
   ],
   parser: '@typescript-eslint/parser',
