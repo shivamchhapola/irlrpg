@@ -134,7 +134,7 @@ function Login({
       password: loginPass.current.value,
     };
 
-    const res = await fetch('/api/register', {
+    const res = await fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
