@@ -35,23 +35,39 @@ export default function App() {
   const [tasks, setTasks] = useState<
     Array<{
       text: string;
-      val: Number;
-      type: Number;
+      val: number;
+      type: number;
     }>
   >([]);
 
   const [add, setAdd] = useState(false);
 
   const getUser = async () => {
-    let res = await fetch('/api/user', {
+    const res = await fetch('/api/user', {
       method: 'GET',
       headers: {
-        Authentication: 'Bearer ' + localStorage.getItem('userToken'),
+        Authentication: `Bearer ${localStorage.getItem('userToken') ?? ''}`,
       },
     });
 
     if (res.ok) {
-      const data = await res.json();
+      const data = (await res.json()) as {
+        name: string;
+        tasks: [{ text: string; val: number; type: number }];
+        stats: {
+          name: string;
+          lvl: number;
+          xp: number;
+          points: number;
+          stats: {
+            str: number;
+            hel: number;
+            agi: number;
+            def: number;
+            mag: number;
+          };
+        };
+      };
       setLevel(data.stats.lvl);
       setXp(data.stats.xp);
       setXpNeeded(data.stats.lvl * 100);
@@ -65,14 +81,14 @@ export default function App() {
   };
 
   const completeTask = async (val: any, i: number, type: number) => {
-    let tempTasks = tasks;
+    const tempTasks = tasks;
     tempTasks.splice(i, 1);
     const res = await fetch('/api/completetask', {
       method: 'POST',
       body: JSON.stringify({ val, tasks: tempTasks, type }),
       headers: {
         'Content-Type': 'application/json',
-        Authentication: 'Bearer ' + localStorage.getItem('userToken') ?? '',
+        Authentication: 'Bearer ' + (localStorage.getItem('userToken') ?? ''),
       },
     });
 
@@ -263,6 +279,7 @@ export default function App() {
               return (
                 <Task
                   i={i}
+                  key={i}
                   text={task.text}
                   xp={task.val}
                   tasks={tasks}
@@ -286,9 +303,7 @@ export default function App() {
 
 function Task({ i, text, xp, completeTask }: any) {
   return (
-    <div
-      key={i}
-      className="w-full px-2 py-1 flex text-white items-center justify-between bg-white bg-opacity-20 rounded-md">
+    <div className="w-full px-2 py-1 flex text-white items-center justify-between bg-white bg-opacity-20 rounded-md">
       <div className="flex gap-2 items-center">
         <MdOutlineSettings />
         <div>

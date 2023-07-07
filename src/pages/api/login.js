@@ -1,8 +1,8 @@
 // @ts-nocheck
-import dbconnect from '../../lib/db.ts';
-import User from '../../models/user.ts';
+import dbconnect from '../../lib/db.js';
+import User from '../../models/user.js';
 import Joi from 'joi';
-import { generateToken } from '../../lib/jwt.ts';
+import { generateToken } from '../../lib/jwt.js';
 
 export default async function handler(req, res) {
   const { username, password } = req.body;

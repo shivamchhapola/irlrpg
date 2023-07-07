@@ -1,7 +1,7 @@
 // @ts-nocheck
-import dbConnect from '../../lib/db.ts';
-import { verify } from '../../lib/jwt.ts';
-import UserTasks from '../../models/userTasks.ts';
+import dbConnect from '../../lib/db.js';
+import { verify } from '../../lib/jwt.js';
+import UserTasks from '../../models/userTasks.js';
 
 export default async function handler(req, res) {
   const authHeader = req.headers.authentication;
@@ -12,17 +12,17 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       await dbConnect();
-
       await UserTasks.findOneAndUpdate(
         { userid },
         {
-          tasks: req.body.tasks,
+          $push: {
+            tasks: req.body,
+          },
         }
       );
-
       return res.status(200).json((await UserTasks.findOne({ userid })).tasks);
     } catch (error) {
-      return res.status(500).send('Could not complete your task: ' + error);
+      return res.status(500).send('Could not add your task');
     }
   }
 }
